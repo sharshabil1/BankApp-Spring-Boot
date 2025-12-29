@@ -1,48 +1,36 @@
-# 💰 Easy Banking - Spring Boot Project
+install JAVA 17.0.17
+install JAVA JDK 17
+or
+install JAVA 22.0.1
+install JAVA JDK 22.0.1
 
-A simple and secure online banking system built using **Spring Boot**.  
-It allows users to register, log in, transfer money, deposit/withdraw funds, and view transaction history — all through a user-friendly dashboard.
+install Maven
+{
+    https://maven.apache.org/download.cgi,
+    apache-maven-3.9.x-bin.zip,
 
+    Extract it to: 
+        "C:\Program Files\Apache\Maven",
 
-Link : https://bankapp-spring-boot-3.onrender.com/login
-(it may take some time to start )
+    Under System variables: New variable
+        Variable name: MAVEN_HOME
+        Variable value: C:\Program Files\Apache\Maven\apache-maven-3.9.x,
 
----
+    Edit Path
+        Add new line:
+        %MAVEN_HOME%\bin
+}
 
-## 🧭 User Flow
-<img width="710" height="350" alt="_- visual selection (1)" src="https://github.com/user-attachments/assets/1b712baf-473b-4832-aec2-c1dc0e3aabbb" />
+Go back to your project(in terminal):
+    cd BankApp-Spring-Boot
+    mvn clean package
+    java -jar target/bankapp-0.0.1-SNAPSHOT.jar
 
+to see output "http://localhost:8080"
 
-
-
----
-
-## 🔧 Features
-
-- ✅ User Registration & Authentication
-- 💸 Transfer Money Between Accounts
-- 💰 Deposit and Withdraw Funds
-- 📄 View Transaction History
-- 🔐 Secure Login Session Handling
-- 📊 Clean Dashboard UI
-
----
-
-## 🛠️ Technologies Used
-
-| Layer         | Technology         |
-|---------------|--------------------|
-| Backend       | Java, Spring Boot  |
-| Security      | Spring Security    |
-| ORM & DB      | JPA, Hibernate, MySQL |
-| Frontend      | Thymeleaf |
-| Build Tool    | Maven              |
-
----
-
-## 🚀 Getting Started
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/atharvabhalerao1963/BankApp-Spring-Boot.git
-cd BankApp-Spring-Boot
+to see database "http://localhost:8080/h2-console"
+{
+    JDBC URL: jdbc:h2:mem:bankdb
+    User: sa
+    Password: (leave empty)
+}
