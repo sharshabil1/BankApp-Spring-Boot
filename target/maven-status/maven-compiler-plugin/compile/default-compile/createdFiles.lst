@@ -1,8 +1,8 @@
-com\example\bankapp\config\SecurityConfig.class
-com\example\bankapp\model\Account.class
-com\example\bankapp\model\Transaction.class
-com\example\bankapp\service\AccountService.class
-com\example\bankapp\BankappApplication.class
-com\example\bankapp\repository\AccountRepository.class
-com\example\bankapp\repository\TransactionRepository.class
-com\example\bankapp\controller\BankController.class
+com\sharshabil\bankapp\model\Loan.class
+com\sharshabil\bankapp\dto\LoanRequest.class
+com\sharshabil\bankapp\service\LoanService.class
+com\sharshabil\bankapp\model\Borrower.class
+com\sharshabil\bankapp\repository\BorrowerRepository.class
+com\sharshabil\bankapp\BankApplication.class
+com\sharshabil\bankapp\repository\LoanRepository.class
+com\sharshabil\bankapp\controller\ManagerController.class
