@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard - EASY BANKING</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #2C3E50; --primary-darker: #1A252F; --secondary-dark: #34495E;
+            --accent-gold: #F1C40F; --accent-gold-light: #F7DC6F; --light-text: #ECF0F1;
+            --success-color: #27AE60; --info-color: #2980B9; --danger-color: #E74C3C;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary-dark));
+            color: var(--light-text);
+            min-height: 100vh; display: flex; flex-direction: column;
+        }
+        .btn-admin.active {background-color: var(--accent-gold); color: var(--primary-darker); border-color: var(--accent-gold); }
+        .navbar-custom { background-color: var(--primary-dark); padding: 0.8rem 1rem; }
+        .navbar-brand { color: var(--accent-gold) !important; font-weight: 700; }
+        .nav-link { color: #fff !important; }
+        .dashboard-container { max-width: 1200px; margin: 80px auto 100px; padding: 0 20px; }
+        .table-container { background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 20px; margin-top: 20px; }
+        .table { color: var(--light-text); }
+        .table thead th { border-top: none; border-bottom: 2px solid var(--accent-gold); color: var(--accent-gold); }
+        .btn-admin { width: 220px; margin: 10px; color: white; background-color: var(--secondary-dark); border: 1px solid var(--accent-gold); }
+        .btn-admin:hover { background-color: var(--accent-gold-light); color: var(--primary-darker); }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#"><i class="fas fa-user-shield mr-2"></i>ADMIN PORTAL</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt mr-1"></i> User Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt mr-1"></i> Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="dashboard-container">
+    <div class="text-center mb-5">
+        <h2>Admin Control Panel</h2>
+        <p class="text-muted">Viewing latest system data</p>
+    </div>
+
+    <div class="d-flex justify-content-center flex-wrap mb-4">
+        <button class="btn btn-admin" type="button" data-target="#viewAccounts">
+            <i class="fas fa-users mr-2"></i> All Accounts
+        </button>
+        
+        <button class="btn btn-admin" type="button" data-target="#viewDeposits">
+            <i class="fas fa-arrow-down mr-2"></i> All Deposits
+        </button>
+        
+        <button class="btn btn-admin" type="button" data-target="#viewWithdrawals">
+            <i class="fas fa-arrow-up mr-2"></i> All Withdrawals
+        </button>
+        
+        <button class="btn btn-admin" type="button" data-target="#viewTransfers">
+            <i class="fas fa-exchange-alt mr-2"></i> All Transfers
+        </button>
+    </div>
+
+    <div class="collapse show" id="viewAccounts">
+        <div class="table-container">
+            <h4 class="mb-4 text-center">System Accounts (Latest First)</h4>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Type</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="acc : ${allAccounts}">
+                        <td th:text="${acc.id}"></td>
+                        <td th:text="${acc.username}"></td>
+                        <td>
+                            <span th:if="${acc.usertype == 'Admin'}" class="badge badge-warning">Admin</span>
+                            <span th:if="${acc.usertype != 'Admin'}" class="badge badge-light">User</span>
+                        </td>
+                        <td th:text="'&#65020;' + ${#numbers.formatDecimal(acc.balance, 1, 2)}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="collapse" id="viewDeposits">
+        <div class="table-container">
+            <h4 class="mb-4 text-center">All Deposits</h4>
+            <table class="table table-hover">
+                <thead><tr><th>ID</th><th>User</th><th>Amount</th><th>Date</th></tr></thead>
+                <tbody>
+                    <tr th:each="tr : ${allDeposits}">
+                        <td th:text="${tr.id}"></td>
+                        <td th:text="${tr.account.username}"></td>
+                        <td class="text-success" th:text="'+ &#65020;' + ${tr.amount}"></td>
+                        <td th:text="${#temporals.format(tr.timestamp, 'yyyy-MM-dd HH:mm')}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="collapse" id="viewWithdrawals">
+        <div class="table-container">
+            <h4 class="mb-4 text-center">All Withdrawals</h4>
+            <table class="table table-hover">
+                <thead><tr><th>ID</th><th>User</th><th>Amount</th><th>Date</th></tr></thead>
+                <tbody>
+                    <tr th:each="tr : ${allWithdrawals}">
+                        <td th:text="${tr.id}"></td>
+                        <td th:text="${tr.account.username}"></td>
+                        <td class="text-danger" th:text="'- &#65020;' + ${tr.amount}"></td>
+                        <td th:text="${#temporals.format(tr.timestamp, 'yyyy-MM-dd HH:mm')}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="collapse" id="viewTransfers">
+        <div class="table-container">
+            <h4 class="mb-4 text-center">All Transfers</h4>
+            <table class="table table-hover">
+                <thead><tr><th>ID</th><th>Initiator</th><th>Description</th><th>Amount</th><th>Date</th></tr></thead>
+                <tbody>
+                    <tr th:each="tr : ${allTransfers}">
+                        <td th:text="${tr.id}"></td>
+                        <td th:text="${tr.account.username}"></td>
+                        <td th:text="${tr.type}"></td>
+                        <td th:text="'&#65020;' + ${tr.amount}"></td>
+                        <td th:text="${#temporals.format(tr.timestamp, 'yyyy-MM-dd HH:mm')}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $('.btn-admin').on('click', function () {
+        var target = $(this).data('target');
+
+        // Hide all visible sections
+        $('.collapse.show').collapse('hide');
+
+        // Show selected section (NO toggle)
+        $(target).collapse({ toggle: false }).collapse('show');
+
+        // Remove active state from all buttons
+        $('.btn-admin').removeClass('active');
+
+        // Add active state to clicked button
+        $(this).addClass('active');
+    });
+
+    // Set default active button on page load (Accounts)
+    $('.btn-admin[data-target="#viewAccounts"]').addClass('active');
+</script>
+
+
+</body>
+</html>

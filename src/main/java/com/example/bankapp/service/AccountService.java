@@ -30,7 +30,9 @@ public class AccountService implements UserDetailsService {
 
     @Autowired
     private TransactionRepository transactionRepository;
-
+    public List<Account> getAllUsers(){
+        return accountRepository.findAll();
+    }
     public Account findAccountByUsername(String username) {
         return accountRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Account not found"));
     }
@@ -44,6 +46,7 @@ public class AccountService implements UserDetailsService {
         account.setUsername(username);
         account.setPassword(passwordEncoder.encode(password)); // Encrypt password
         account.setBalance(BigDecimal.ZERO); // Initial balance set to 0
+        account.setUsertype("User");
         return accountRepository.save(account);
     }
 
@@ -90,10 +93,23 @@ public class AccountService implements UserDetailsService {
         }
         return new Account(
                 account.getUsername(),
+                account.getUsertype(),
                 account.getPassword(),
                 account.getBalance(),
                 account.getTransactions(),
                 authorities());
+    }
+
+    public List<Account> getAllAccountsSorted() {
+        List<Account> accounts = accountRepository.findAll();
+        accounts.sort((a1, a2) -> a2.getId().compareTo(a1.getId())); // Sort Descending by ID
+        return accounts;
+    }
+
+    public List<Transaction> getAllTransactionsSorted() {
+        List<Transaction> transactions = transactionRepository.findAll();
+        transactions.sort((t1, t2) -> t2.getId().compareTo(t1.getId())); // Sort Descending by Date
+        return transactions;
     }
 
     public Collection<? extends GrantedAuthority> authorities() {

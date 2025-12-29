@@ -1,6 +1,7 @@
 package com.example.bankapp.controller;
 
 import com.example.bankapp.model.Account;
+import com.example.bankapp.model.Transaction;
 import com.example.bankapp.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,6 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
+
+import java.util.stream.Collectors;
+import java.util.List;
+
 
 @Controller
 public class BankController {
@@ -41,7 +46,11 @@ public class BankController {
             return "register";
         }
     }
-
+    @GetMapping("/hi")
+    public String hello()
+    {
+        return "hi";
+    }
     @GetMapping("/login")
     public String login() {
         return "login";
@@ -95,4 +104,44 @@ public class BankController {
         return "redirect:/dashboard";
     }
 
+    @GetMapping("/admin/dashboard")
+    public String adminDashboard(Model model) {
+        // Get the current logged in user
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account account = accountService.findAccountByUsername(username);
+
+        // Security Check: Redirect if not Admin
+        if (!"Admin".equalsIgnoreCase(account.getUsertype())) {
+            return "redirect:/dashboard";
+        }
+        
+        model.addAttribute("account", account); // For the welcome message
+
+        // 1. Get All Accounts (Sorted latest first)
+        List<Account> allAccounts = accountService.getAllAccountsSorted();
+        model.addAttribute("allAccounts", allAccounts);
+
+        // 2. Get All Transactions (Sorted latest first)
+        List<Transaction> allTransactions = accountService.getAllTransactionsSorted();
+
+        // 3. Filter specific lists
+        List<Transaction> deposits = allTransactions.stream()
+                .filter(t -> "Deposit".equals(t.getType()))
+                .collect(Collectors.toList());
+
+        List<Transaction> withdrawals = allTransactions.stream()
+                .filter(t -> "Withdrawal".equals(t.getType()))
+                .collect(Collectors.toList());
+
+        List<Transaction> transfers = allTransactions.stream()
+                .filter(t -> t.getType().startsWith("Transfer"))
+                .collect(Collectors.toList());
+
+        model.addAttribute("allDeposits", deposits);
+        model.addAttribute("allWithdrawals", withdrawals);
+        model.addAttribute("allTransfers", transfers);
+
+        return "admin/dashboard";
+    }
+    
 }

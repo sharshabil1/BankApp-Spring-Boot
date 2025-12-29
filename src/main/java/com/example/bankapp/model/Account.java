@@ -17,6 +17,7 @@ public class Account implements UserDetails {
     private String username;
     private String password;
     private BigDecimal balance;
+    private String usertype;
 
     @OneToMany(mappedBy = "account")
     private List<Transaction> transactions;
@@ -28,10 +29,11 @@ public class Account implements UserDetails {
 
     }
 
-    public Account(String username, String password, BigDecimal balance, List<Transaction> transactions, Collection<? extends GrantedAuthority> authorities) {
+    public Account(String username, String usertype, String password, BigDecimal balance, List<Transaction> transactions, Collection<? extends GrantedAuthority> authorities) {
         this.username = username;
         this.password = password;
         this.balance = balance;
+        this.usertype =usertype;
         this.transactions = transactions;
         this.authorities = authorities;
     }
@@ -67,6 +69,14 @@ public class Account implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getUsertype() {
+        return usertype;
+    }
+
+    public void setUsertype(String usertype) {
+        this.usertype = usertype;
     }
 
     public BigDecimal getBalance() {
